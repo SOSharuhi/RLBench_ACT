@@ -1,11 +1,10 @@
 
 
+# RLBench_ACT: Running ALoha ACT and Diffusion Policy in the RLBench Framework
 
 ### Declaration
 
-RLBench_ACT: Running ALoha ACT and Diffusion Policy in the RLBench Framework
-
-This repo is forked from the [Aloha ACT](https://github.com/tonyzhaozh/act)，[Aloha ACT](https://github.com/tonyzhaozh/act)，[RLBench](https://github.com/stepjam/RLBench),[Pyrep](https://github.com/stepjam/PyRep).
+This repo is forked from the [Aloha ACT](https://github.com/tonyzhaozh/act)，[RLBench](https://github.com/stepjam/RLBench),[Pyrep](https://github.com/stepjam/PyRep).
 
 ### Installation(Ubuntu20.04)
 
