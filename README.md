@@ -91,12 +91,11 @@ python3 act/visualize_episodes.py --dataset_dir Datasets/sorting_program5/variat
     
 ```bash
 # train
-
 python3 act/imitate_episodes_rlbench.py \
 --task_name sorting_program5 \
 --ckpt_dir Trainings/sorting_program5 \
 --policy_class ACT --kl_weight 10 --chunk_size 20 --hidden_dim 512 --batch_size 8 --dim_feedforward 3200 \
---num_epochs 2000  --lr 1e-5 \
+--num_epochs 14000  --lr 1e-5 \
 --seed 0
 
 # infrence
@@ -104,7 +103,7 @@ python3 act/imitate_episodes_rlbench.py \
 --task_name sorting_program5 \
 --ckpt_dir Trainings/sorting_program5 \
 --policy_class ACT --kl_weight 10 --chunk_size 20 --hidden_dim 512 --batch_size 8 --dim_feedforward 3200 \
---num_epochs 2000  --lr 1e-5 --temporal_agg \
+--num_epochs 14000  --lr 1e-5 --temporal_agg \
 --seed 0 --eval --onscreen_render
 
 ```
