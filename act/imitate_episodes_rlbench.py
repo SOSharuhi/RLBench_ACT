@@ -253,7 +253,7 @@ def eval_bc(config, ckpt_name, save_episode=True, num_verification=50, variation
                 ### post-process actions
                 raw_action = raw_action.squeeze(0).cpu().numpy()
                 action = post_process(raw_action)  
-                print(f'{t=}: {action=}')
+                # print(f'{t=}: {action=}')
                 ts_obs, reward, terminate = env.step(action) # qpos could deal with gripper command
                 qpos_list.append(qpos_numpy)
                 rewards.append(reward) 

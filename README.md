@@ -2,11 +2,11 @@
 
 # RLBench_ACT: Running ALoha ACT and Diffusion Policy in the RLBench Framework
 
-### Declaration
+## Declaration
 
 This repo is forked from the [Aloha ACT](https://github.com/tonyzhaozh/act), [RLBench](https://github.com/stepjam/RLBench), [Pyrep](https://github.com/stepjam/PyRep).
 
-### Installation(Ubuntu20.04)
+## Installation(Ubuntu20.04)
 
 RLBench-ACT is built around ACT, RLBench, PyRep and CoppeliaSim v4.1.0. And we recommend [Conda](https://github.com/conda-forge/miniforge) as your python version manager!
 
@@ -53,7 +53,7 @@ conda install pytorch==2.1.2 torchvision==0.16.2 torchaudio==2.1.2 pytorch-cuda=
 
 ```
 
-### Usage
+## Usage
 
 1. test RLBench task builder. 
     
@@ -105,10 +105,11 @@ python3 act/imitate_episodes_rlbench.py \
 --policy_class ACT --kl_weight 10 --chunk_size 20 --hidden_dim 512 --batch_size 8 --dim_feedforward 3200 \
 --num_epochs 14000  --lr 1e-5 --temporal_agg \
 --seed 0 --eval --onscreen_render
-
 ```
 
-### Task build
+The task is more difficult for the robot because there are 2 other colors of interferences at the same time, and the cube also comes with a certain angle of rotation of 45°, which can also lead to failure if the angles are not aligned. The success rate only goes up when the training epoch is around 14000.
+
+## Task build
 
 1. We recommend creating a new task from an already existing task. For example
 
