@@ -31,7 +31,7 @@ from rlbench.backend import utils
 import time
 
 
-os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = "/home/boxjod/Gym/RLBench/CoppeliaSim_Edu_V4_1_0_Ubuntu20_04" 
+os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = "/home/<YOUR COMPUTER NAME>/COPPELIASIM"
 
 FLAGS = flags.FLAGS
 

@@ -45,8 +45,7 @@ conda activate rlbench_act
 pip3 install -r requirements.txt
 pip3 install -e ./PyRep # more information on https://github.com/stepjam/PyRep
 pip3 install -e ./RLBench # more information on https://github.com/stepjam/RLBench
-pip3 install -e ./act # more information on https://github.com/tonyzhaozh/act
-pip3 install -e ./act/detr
+pip3 install -e ./act/detr # more information on https://github.com/tonyzhaozh/act
 
 # install pytorch-cuda
 conda install pytorch==2.1.2 torchvision==0.16.2 torchaudio==2.1.2 pytorch-cuda=12.1 -c pytorch -c nvidia
@@ -66,12 +65,12 @@ python3 RLBench/tools/task_builder_sawyer.py --task sorting_program5
 Do not save the scence in Coppeliasim's GUI, either with *ctrl+s* or in the “Do you wish to save the changes?” window that pops up when you close it, you need to select *No* in all GUI screens. If you accidentally saved it in the GUI, run the following command:
 
 ```bash
-cd rm task_design.ttt 
+cd RLBench/rlbench
 rm task_design.ttt 
 cp task_design_back.ttt task_design.ttt
 ```
 
-2. get demo for RPT in RLBench
+2. get demo for RPT in RLBench. Change the python file RLBench/tools/dataset_generator_hdf5.py: line 35 and act/sim_env_rlbench.py:line 32 "os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = "/home/<YOUR COMPUTER NAME>/COPPELIASIM""
     
 ```bash
 python3 RLBench/tools/dataset_generator_hdf5.py \
