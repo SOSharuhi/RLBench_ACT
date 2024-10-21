@@ -60,7 +60,6 @@ conda install pytorch==2.1.2 torchvision==0.16.2 torchaudio==2.1.2 pytorch-cuda=
 conda activate rlbench_act
 python3 RLBench/tools/task_builder_sawyer.py --task sorting_program5 
 #[remember don't save scene in Coppeliasim GUI ]
-# if you occur error "Handle cam_head_mask does not exist.". go
 ```
 Do not save the scence in Coppeliasim's GUI, either with *ctrl+s* or in the “Do you wish to save the changes?” window that pops up when you close it, you need to select *No* in all GUI screens. If you accidentally saved it in the GUI, run the following command:
 

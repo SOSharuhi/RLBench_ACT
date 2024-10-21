@@ -10,7 +10,7 @@ setuptools
 natsort
 
 
-# for rlbench_rpt
+# for rlbench_act
 # torch
 # torchvision
 # torchaudio

@@ -315,9 +315,8 @@ class Scene(object):
                 (1.0 if self.robot.gripper.get_open_amount()[0] > 0.98 else 0.0)
                 if self._obs_config.gripper_open else None),
                 
-            ######################################################################################################
             gripper_pose=(np.array(tip.get_pose(relative_to=self.robot.arm)) if self._obs_config.gripper_pose else None), # relative_to=self.robot
-            ######################################################################################################
+
             gripper_matrix=(tip.get_matrix(relative_to=self.robot.arm) if self._obs_config.gripper_matrix else None),
             
             gripper_touch_forces=(

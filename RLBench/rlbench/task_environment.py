@@ -90,7 +90,6 @@ class TaskEnvironment(object):
 
         self._reset_called = True
         # Returns a list of descriptions and the first observation
-        ####################################################################################################################################
         waypoints = self._scene.task.get_waypoints()
                   
         if len(waypoints) == 0:
@@ -115,7 +114,7 @@ class TaskEnvironment(object):
                         
                     point.end_of_path()
                 break
-        ####################################################################################################################################
+
         
         return desc, self._scene.get_observation()
 
