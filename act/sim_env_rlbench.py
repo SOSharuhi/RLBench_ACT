@@ -28,9 +28,7 @@ def make_sim_env(task_name, onscreen_render):
                                         right_gripper_qvel (1)]     # normalized gripper velocity (pos: opening, neg: closing)
                         "images": {"main": (480x640x3)}        # h, w, c, dtype='uint8'
     """
-    # os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = "~/COPPELIASIM"
-    os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = "/home/<YOUR COMPUTER NAME>/COPPELIASIM"
-    # os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = "~/COPPELIASIM"
+    os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = os.path.expanduser('~/COPPELIASIM')
     
     img_size = [640, 480] # 160, 120
         

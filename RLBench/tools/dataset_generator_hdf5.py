@@ -31,7 +31,7 @@ from rlbench.backend import utils
 import time
 
 
-os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = "/home/<YOUR COMPUTER NAME>/COPPELIASIM"
+os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = os.path.expanduser('~/COPPELIASIM')
 
 FLAGS = flags.FLAGS
 

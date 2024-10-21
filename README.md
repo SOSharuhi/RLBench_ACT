@@ -70,7 +70,7 @@ rm task_design.ttt
 cp task_design_back.ttt task_design.ttt
 ```
 
-2. get demo for RPT in RLBench. Change the python file RLBench/tools/dataset_generator_hdf5.py: line 35 and act/sim_env_rlbench.py:line 32 "os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = "/home/<YOUR COMPUTER NAME>/COPPELIASIM""
+2. get robot task demo from RLBench. 
     
 ```bash
 python3 RLBench/tools/dataset_generator_hdf5.py \
