@@ -4,7 +4,7 @@
 
 ## Declaration
 
-This repo is forked from the [Aloha ACT](https://github.com/tonyzhaozh/act), [RLBench](https://github.com/stepjam/RLBench), [Pyrep](https://github.com/stepjam/PyRep).
+This repo is forked from the [Aloha ACT](https://github.com/tonyzhaozh/act), [RLBench](https://github.com/stepjam/RLBench), [Pyrep](https://github.com/stepjam/PyRep). And it's one of the works of [Constrained Behavior Cloning for Robotic Learning](https://arxiv.org/abs/2408.10568?context=cs.RO)
 
 ## Installation(Ubuntu20.04)
 
@@ -125,3 +125,26 @@ But don't save this task scence in the CoppeliaSim GUI!!!
 - open_gripper();
 - close_gripper();
 - steps(12); # You can set a fixed number of steps to reach this path point.
+
+
+## Cite
+```
+@software{junxie2024RLBench_ACT,
+    title={Humanoid Arm Retarget},
+    author={Jun Xie},
+    year={2024},
+    url = {https://github.com/Boxjod/RLBench_ACT},
+}
+```
+and our work on Constrained Behavior Cloning for Robotic Learning
+```
+@article{junxie2024cbc,
+  title   = {Constrained Behavior Cloning for Robotic Learning},
+  author  = {Wensheng Liang and Jun Xie and Zhicheng Wang and Jianwei Tan and Xiaoguang Ma},
+  year    = {2024},
+  journal = {arXiv preprint arXiv:2408.10568}
+}
+```
+
+
+
