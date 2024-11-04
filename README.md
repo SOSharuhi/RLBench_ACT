@@ -137,7 +137,7 @@ If you find the RLBench_ACT in this repository useful for your research, you can
     url = {https://github.com/Boxjod/RLBench_ACT},
 }
 ```
-and our work on Constrained Behavior Cloning for Robotic Learning
+or our work on Constrained Behavior Cloning for Robotic Learning
 ```
 @article{junxie2024cbc,
   title   = {Constrained Behavior Cloning for Robotic Learning},
