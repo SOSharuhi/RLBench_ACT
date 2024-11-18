@@ -105,7 +105,7 @@ python3 act/imitate_episodes_rlbench.py \
 --seed 0 --eval --onscreen_render
 ```
 
-The task is more difficult for the robot because there are 2 other colors of interferences at the same time, and the cube also comes with a certain angle of rotation of 45°, which can also lead to failure if the angles are not aligned. The success rate only goes up when the training epoch is around 14000.
+~~The task is more difficult for the robot because there are 2 other colors of interferences at the same time, and the cube also comes with a certain angle of rotation of 45°, which can also lead to failure if the angles are not aligned. The success rate only goes up when the training epoch is around 14000.~~
 
 ## Task build
 
