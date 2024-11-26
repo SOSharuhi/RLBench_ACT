@@ -28,7 +28,6 @@ class Gripper(RobotComponent):
         i = 0
         while True:
             fname = '%s_touchSensor%d%s' % (name, i, suffix)
-            print(f'#########{fname=}')
             if not ForceSensor.exists(fname):
                 break
             self._touch_sensors.append(ForceSensor(fname))
