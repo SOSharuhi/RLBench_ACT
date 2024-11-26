@@ -31,6 +31,7 @@ def main(args):
     batch_size_train = args['batch_size'] 
     batch_size_val = args['batch_size']
     num_epochs = args['num_epochs']
+    robot_name = args['robot']
     
     is_sim = True 
     if is_sim:
@@ -43,7 +44,10 @@ def main(args):
     episode_len = task_config['episode_len']
     camera_names = task_config['camera_names']
     
-    state_dim =  8 
+    if robot_name == "panda" or robot_name == "sawyer":
+        state_dim =  8 
+    else:
+        state_dim =  7
     lr_backbone = 1e-5
     backbone = 'resnet18'
     if 'ACT' in policy_class: # policy_class == 'ACT':
@@ -61,10 +65,11 @@ def main(args):
                          'dec_layers': dec_layers,
                          'nheads': nheads,
                          'camera_names': camera_names,
+                         'state_dim': state_dim,
                          }
     elif policy_class == 'CNNMLP':
         policy_config = {'lr': args['lr'], 'lr_backbone': lr_backbone, 'backbone' : backbone, 'num_queries': 1,
-                         'camera_names': camera_names,}
+                         'camera_names': camera_names,'state_dim': state_dim,}
     else:
         raise NotImplementedError
     
@@ -81,7 +86,8 @@ def main(args):
         'seed': args['seed'],
         'temporal_agg': args['temporal_agg'],
         'camera_names': camera_names,
-        'real_robot': not is_sim
+        'real_robot': not is_sim,
+        'robot_name': robot_name,
     }
     
     if is_eval:
@@ -159,6 +165,7 @@ def eval_bc(config, ckpt_name, save_episode=True, num_verification=50, variation
     max_timesteps = config['episode_len']
     task_name = config['task_name']
     temporal_agg = config['temporal_agg']
+    robot_name = config['robot_name']
 
     # load policy and stats
     ckpt_path = os.path.join(ckpt_dir, ckpt_name)
@@ -179,7 +186,7 @@ def eval_bc(config, ckpt_name, save_episode=True, num_verification=50, variation
     # load environment
     if not real_robot:
         from sim_env_rlbench import make_sim_env
-        env = make_sim_env(task_name, onscreen_render)
+        env = make_sim_env(task_name, onscreen_render, robot_name)
         env_max_reward = 1 # env.task.max_rewardz
     query_frequency = policy_config['num_queries']
     if temporal_agg:
@@ -273,7 +280,7 @@ def eval_bc(config, ckpt_name, save_episode=True, num_verification=50, variation
         episode_highest_reward = np.max(rewards)  
         highest_rewards.append(episode_highest_reward)
         # print(f'Rollout {rollout_id}\n{episode_return=}, {episode_highest_reward=}, {env_max_reward=}, Success: {episode_highest_reward==env_max_reward}')
-        print(f'{rollout_id} Rollout with {t} steps for [{descriptions[0]}]: {episode_highest_reward==env_max_reward}')
+        # print(f'{rollout_id} Rollout with {t} steps for [{descriptions[0]}]: {episode_highest_reward==env_max_reward}')
         if(rollout_id): 
             if save_episode:
                 save_videos(image_list, DT, video_path=os.path.join(ckpt_dir, f'video_{ckpt_name0}_{rollout_id}_{episode_highest_reward==env_max_reward}.mp4'))
@@ -321,7 +328,7 @@ def train_bc(train_dataloader, val_dataloader, config):
     min_val_loss = np.inf
     best_ckpt_info = None
     for epoch in tqdm(range(num_epochs)):
-        print(f'\nEpoch {epoch}')
+        # print(f'\nEpoch {epoch}')
         # validation
         with torch.inference_mode():
             policy.eval()
@@ -336,16 +343,16 @@ def train_bc(train_dataloader, val_dataloader, config):
             if epoch_val_loss < min_val_loss:
                 min_val_loss = epoch_val_loss
                 best_ckpt_info = (epoch, min_val_loss, deepcopy(policy.state_dict()))
-        print(f'Val loss:   {epoch_val_loss:.5f}')
+        # print(f'Val loss:   {epoch_val_loss:.5f}')
         summary_string = ''
         for k, v in epoch_summary.items():
             summary_string += f'{k}: {v.item():.3f} '
-        print(summary_string)
+        # print(summary_string)
 
         # training
         policy.train()
         optimizer.zero_grad()
-        print(f'{train_dataloader=}')
+        # print(f'{train_dataloader=}')
         for batch_idx, data in enumerate(train_dataloader):
             forward_dict = forward_pass(data, policy)
             # backward
@@ -356,11 +363,11 @@ def train_bc(train_dataloader, val_dataloader, config):
             train_history.append(detach_dict(forward_dict))
         epoch_summary = compute_dict_mean(train_history[(batch_idx+1)*epoch:(batch_idx+1)*(epoch+1)])
         epoch_train_loss = epoch_summary['loss']
-        print(f'Train loss: {epoch_train_loss:.5f}')
+        # print(f'Train loss: {epoch_train_loss:.5f}')
         summary_string = ''
         for k, v in epoch_summary.items():
             summary_string += f'{k}: {v.item():.3f} '
-        print(summary_string)
+        # print(summary_string)
 
         if epoch % 100 == 0:
             ckpt_path = os.path.join(ckpt_dir, f'policy_epoch_{epoch}_seed_{seed}.ckpt')
@@ -418,5 +425,6 @@ if __name__ == '__main__':
     parser.add_argument('--hidden_dim', action='store', type=int, help='hidden_dim', required=False)
     parser.add_argument('--dim_feedforward', action='store', type=int, help='dim_feedforward', required=False)
     parser.add_argument('--temporal_agg', action='store_true')
+    parser.add_argument('--robot', action='store', default='sawyer', type=str, help='which robot you want to use')
     
     main(vars(parser.parse_args()))

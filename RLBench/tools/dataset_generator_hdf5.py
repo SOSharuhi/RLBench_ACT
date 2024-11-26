@@ -43,6 +43,7 @@ flags.DEFINE_integer('processes', 1, 'The number of parallel processes during co
 flags.DEFINE_integer('episodes_per_task', 50, 'The number of episodes to collect per task.')
 flags.DEFINE_integer('variations', -1, 'Number of variations to collect per task. -1 for all.')
 flags.DEFINE_boolean('onscreen_render', False, 'if onscreen render.')
+flags.DEFINE_string('robot', 'sawyer', 'which robot do you want use.')
 
 np.set_printoptions(linewidth=200)
 
@@ -64,7 +65,8 @@ def save_demo(demo, example_path, ex_idx):
     
     for i, obs in enumerate(demo): 
         if i >= state2action_step: 
-            data_dict['/action'].append(np.append(obs.joint_positions, obs.gripper_open))
+            action = np.append(obs.joint_positions, obs.gripper_open)
+            data_dict['/action'].append(action)
            
         data_dict['/observations/images/wrist'].append(obs.wrist_rgb) # 480， 640， 3
         data_dict['/observations/images/head'].append(obs.head_rgb)
@@ -72,19 +74,21 @@ def save_demo(demo, example_path, ex_idx):
         
     for idx in range(state2action_step):
         data_dict['/action'].append(np.append(obs.joint_positions, obs.gripper_open))
-        
+    
+    action_len = np.shape(action)[0]
+    
     dataset_path = os.path.join(example_path, f'episode_{ex_idx}') # save path
     check_and_make(example_path)
     
     with h5py.File(dataset_path + '.hdf5', 'w', rdcc_nbytes=1024 ** 2 * 2) as root: 
         root.attrs['sim'] = True 
-        action = root.create_dataset('action', (max_timesteps, 8))
+        action = root.create_dataset('action', (max_timesteps, action_len))
         obs = root.create_group('observations')
         image = obs.create_group('images')
         image.create_dataset('wrist', (max_timesteps, 480, 640, 3), dtype='uint8',chunks=(1, 480, 640, 3), ) # 640, 480 160, 120, 120, 160
         # image.create_dataset('wrist_depth', (max_timesteps, 480, 640, 3), dtype='uint8',chunks=(1, 480, 640, 3), ) 
         image.create_dataset('head', (max_timesteps, 480, 640, 3), dtype='uint8',chunks=(1, 480, 640, 3), ) 
-        qpos = obs.create_dataset('qpos', (max_timesteps, 8))
+        qpos = obs.create_dataset('qpos', (max_timesteps, action_len))
         
         for name, array in data_dict.items():
             root[name][...] = array
@@ -115,14 +119,14 @@ def run(i, lock, task_index, variation_count, results, file_lock, tasks):
     elif FLAGS.renderer == 'opengl3':
         obs_config.wrist_camera.render_mode = RenderMode.OPENGL3
     
-    print(f'{FLAGS.onscreen_render=}')
+    print(f'{FLAGS.onscreen_render=}, {FLAGS.robot=}')
     headless_val = False if FLAGS.onscreen_render else True
-    
+
     rlbench_env = Environment( 
         action_mode=MoveArmThenGripper(JointVelocity(), Discrete()),
         obs_config=obs_config,
         headless=headless_val,
-        robot_setup='sawyer')
+        robot_setup=FLAGS.robot)
     
     rlbench_env.launch()
     task_env = None

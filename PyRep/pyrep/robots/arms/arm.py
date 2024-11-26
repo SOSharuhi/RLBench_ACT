@@ -23,12 +23,12 @@ class Arm(RobotComponent):
         """Count is used for when we have multiple copies of arms"""
         joint_names = ['%s_joint%d' % (name, i+1) for i in range(num_joints)]
         super().__init__(count, name, joint_names, base_name)
-
+        self.name = name 
         # Used for motion planning
         self.max_velocity = max_velocity
         self.max_acceleration = max_acceleration
         self.max_jerk = max_jerk
-
+        
         # Motion planning handles
         suffix = '' if count == 0 else '#%d' % (count - 1)
         self._ik_target = Dummy('%s_target%s' % (name, suffix))

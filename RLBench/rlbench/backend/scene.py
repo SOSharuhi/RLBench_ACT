@@ -163,9 +163,10 @@ class Scene(object):
         self.robot.arm.set_joint_target_velocities(
             [0] * len(self.robot.arm.joints))
         # head_joint reset for sawyer
-        from pyrep.objects.joint import Joint
-        head_joint = Joint("Sawyer_headJoint")
-        head_joint.set_joint_target_position(0)
+        if self.robot.arm.name == "sawyer":
+            from pyrep.objects.joint import Joint
+            head_joint = Joint("Sawyer_headJoint")
+            head_joint.set_joint_target_position(0)
         
         self.robot.gripper.set_joint_positions(
             self._starting_gripper_joint_pos, disable_dynamics=True)

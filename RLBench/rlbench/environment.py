@@ -93,12 +93,18 @@ class Environment(object):
         if self._pyrep is not None:
             raise RuntimeError('Already called launch!')
         self._pyrep = PyRep()
-        self._pyrep.launch(join(DIR_PATH, TTT_FILE), headless=self._headless)
-
         arm_class, gripper_class, _ = SUPPORTED_ROBOTS[
             self._robot_setup]
-
-        # We assume the panda is already loaded in the scene.
+        
+        ttt_file = join(DIR_PATH, f'{TTT_FILE_Ours}_{self._robot_setup}.ttt') 
+        print(f'{ttt_file=}')
+        # We assume the robots is already loaded in the scene.  
+        self._pyrep.launch(join(DIR_PATH, ttt_file), headless=self._headless)
+        arm, gripper = arm_class(), gripper_class()
+        
+            
+        # self._pyrep.launch(join(DIR_PATH, TTT_FILE), headless=self._headless)
+        # # We assume the panda is already loaded in the scene.
         # if self._robot_setup != 'panda':
         #     # Remove the panda from the scene
         #     panda_arm = Panda()
@@ -110,9 +116,6 @@ class Environment(object):
         #     arm.set_position(panda_pos)
         # else:
         #     arm, gripper = arm_class(), gripper_class()
-        
-        # We assume the sawyer is already loaded in the scene.    
-        arm, gripper = arm_class(), gripper_class()
         
         self._robot = Robot(arm, gripper)
         if self._randomize_every is None:

@@ -10,7 +10,7 @@ from rlbench.backend.exceptions import *
 import os, socket
 BOX_POSE = [None] # to be changed from outside 
 
-def make_sim_env(task_name, onscreen_render):
+def make_sim_env(task_name, onscreen_render, robot_name):
     """
     Environment for simulated robot bi-manual manipulation, with joint position control
     Action space:      [left_arm_qpos (6),             # absolute joint position
@@ -51,7 +51,7 @@ def make_sim_env(task_name, onscreen_render):
         action_mode=MoveArmThenGripper(JointPosition(), Discrete()),
         obs_config=obs_config,
         headless=headless_val,
-        robot_setup='sawyer')
+        robot_setup=robot_name)
     
     rlbench_env.launch()
     rlbench_env._pyrep.step_ui()

@@ -18,6 +18,7 @@ class RobotComponent(Object):
         suffix = '' if count == 0 else '#%d' % (count - 1)
         super().__init__(
             name + suffix if base_name is None else base_name + suffix)
+        
         self._num_joints = len(joint_names)
 
         # Joint handles

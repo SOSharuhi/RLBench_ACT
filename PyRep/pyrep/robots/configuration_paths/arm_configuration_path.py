@@ -189,9 +189,10 @@ class ArmConfigurationPath(ConfigurationPath):
                     self._joint_position_action = qs
                     
                     # make the head camera always forward 
-                    from pyrep.objects.joint import Joint
-                    head_joint = Joint("Sawyer_headJoint")
-                    head_joint.set_joint_target_position(-qs[0])
+                    if self._arm.name == "sawyer":
+                        from pyrep.objects.joint import Joint
+                        head_joint = Joint("Sawyer_headJoint")
+                        head_joint.set_joint_target_position(-qs[0])
 
                     
                     self._arm.set_joint_target_positions(qs)

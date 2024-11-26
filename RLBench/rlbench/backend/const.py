@@ -23,6 +23,7 @@ LOW_DIM_PICKLE = 'low_dim_obs.pkl'
 VARIATION_DESCRIPTIONS = 'variation_descriptions.pkl'
 
 TTT_FILE = 'task_design.ttt'
+TTT_FILE_Ours = 'task_design'
 
 DEPTH_SCALE = 2**24 - 1
 

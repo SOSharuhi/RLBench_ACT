@@ -28,6 +28,7 @@ class Gripper(RobotComponent):
         i = 0
         while True:
             fname = '%s_touchSensor%d%s' % (name, i, suffix)
+            print(f'#########{fname=}')
             if not ForceSensor.exists(fname):
                 break
             self._touch_sensors.append(ForceSensor(fname))
@@ -42,6 +43,9 @@ class Gripper(RobotComponent):
         :param obj: The object to grasp if detected.
         :return: True if the object was detected/grasped.
         """
+        
+        
+        
         detected = self._proximity_sensor.is_detected(obj)
         # Check if detected and that we are not already grasping it.
         if detected and obj not in self._grasped_objects:

@@ -6,6 +6,9 @@
 
 This repo is forked from the [Aloha ACT](https://github.com/tonyzhaozh/act), [RLBench](https://github.com/stepjam/RLBench), [Pyrep](https://github.com/stepjam/PyRep). And it's one of the works of [Constrained Behavior Cloning for Robotic Learning](https://arxiv.org/abs/2408.10568?context=cs.RO)
 
+## What's New?
+1. November 26, 2024： Now supports sawyer and panda, adding support for panda's original environment acquisition training and inference
+
 ## Installation(Ubuntu20.04)
 
 RLBench-ACT is built around ACT, RLBench, PyRep and CoppeliaSim v4.1.0. And we recommend [Conda](https://github.com/conda-forge/miniforge) as your python version manager!
@@ -58,7 +61,7 @@ conda install pytorch==2.1.2 torchvision==0.16.2 torchaudio==2.1.2 pytorch-cuda=
     
 ```bash
 conda activate rlbench_act
-python3 RLBench/tools/task_builder_sawyer.py --task sorting_program5 
+python3 RLBench/tools/task_builder2.py --task sorting_program5 --robot sawyer # panda
 #[remember don't save scene in Coppeliasim GUI ]
 ```
 Do not save the scence in Coppeliasim's GUI, either with *ctrl+s* or in the “Do you wish to save the changes?” window that pops up when you close it, you need to select *No* in all GUI screens. If you accidentally saved it in the GUI, run the following command:
@@ -74,10 +77,11 @@ cp task_design_back.ttt task_design.ttt
 ```bash
 python3 RLBench/tools/dataset_generator_hdf5.py \
 --save_path Datasets \
+--robot sawyer \ 
 --tasks sorting_program5 \
 --variations 1 \
 --episodes_per_task 50 \
---onscreen_render=False
+--onscreen_render=True
 ```
 
 3. visualize episode
@@ -94,7 +98,7 @@ python3 act/imitate_episodes_rlbench.py \
 --ckpt_dir Trainings/sorting_program5 \
 --policy_class ACT --kl_weight 10 --chunk_size 20 --hidden_dim 512 --batch_size 8 --dim_feedforward 3200 \
 --num_epochs 14000  --lr 1e-5 \
---seed 0
+--seed 0 --robot sawyer 
 
 # infrence
 python3 act/imitate_episodes_rlbench.py \
@@ -102,7 +106,7 @@ python3 act/imitate_episodes_rlbench.py \
 --ckpt_dir Trainings/sorting_program5 \
 --policy_class ACT --kl_weight 10 --chunk_size 20 --hidden_dim 512 --batch_size 8 --dim_feedforward 3200 \
 --num_epochs 14000  --lr 1e-5 --temporal_agg \
---seed 0 --eval --onscreen_render
+--seed 0 --eval --onscreen_render --robot sawyer 
 ```
 
 ~~The task is more difficult for the robot because there are 2 other colors of interferences at the same time, and the cube also comes with a certain angle of rotation of 45°, which can also lead to failure if the angles are not aligned. The success rate only goes up when the training epoch is around 14000.~~
@@ -112,7 +116,7 @@ python3 act/imitate_episodes_rlbench.py \
 1. We recommend creating a new task from an already existing task. For example
 
 ```bash
-python3 RLBench/tools/task_builder_sawyer.py --task sorting_program5
+python3 RLBench/tools/task_builder2.py --task sorting_program5 --robot sawyer
 ```
 input the 'u' in the terminal window you can duplicate the task to a new name.
 
