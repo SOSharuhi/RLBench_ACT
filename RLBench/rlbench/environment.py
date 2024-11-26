@@ -96,26 +96,26 @@ class Environment(object):
         arm_class, gripper_class, _ = SUPPORTED_ROBOTS[
             self._robot_setup]
         
-        ttt_file = join(DIR_PATH, f'{TTT_FILE_Ours}_{self._robot_setup}.ttt') 
-        print(f'{ttt_file=}')
-        # We assume the robots is already loaded in the scene.  
-        self._pyrep.launch(join(DIR_PATH, ttt_file), headless=self._headless)
-        arm, gripper = arm_class(), gripper_class()
+        # ttt_file = join(DIR_PATH, f'{TTT_FILE_Ours}_{self._robot_setup}.ttt') 
+        # print(f'{ttt_file=}')
+        # # We assume the robots is already loaded in the scene.  
+        # self._pyrep.launch(join(DIR_PATH, ttt_file), headless=self._headless)
+        # arm, gripper = arm_class(), gripper_class()
         
             
-        # self._pyrep.launch(join(DIR_PATH, TTT_FILE), headless=self._headless)
-        # # We assume the panda is already loaded in the scene.
-        # if self._robot_setup != 'panda':
-        #     # Remove the panda from the scene
-        #     panda_arm = Panda()
-        #     panda_pos = panda_arm.get_position()
-        #     panda_arm.remove()
-        #     arm_path = join(DIR_PATH, 'robot_ttms', self._robot_setup + '.ttm')
-        #     self._pyrep.import_model(arm_path)
-        #     arm, gripper = arm_class(), gripper_class()
-        #     arm.set_position(panda_pos)
-        # else:
-        #     arm, gripper = arm_class(), gripper_class()
+        self._pyrep.launch(join(DIR_PATH, TTT_FILE), headless=self._headless)
+        # We assume the panda is already loaded in the scene.
+        if self._robot_setup != 'panda':
+            # Remove the panda from the scene
+            panda_arm = Panda()
+            panda_pos = panda_arm.get_position()
+            panda_arm.remove()
+            arm_path = join(DIR_PATH, 'robot_ttms', self._robot_setup + '.ttm')
+            self._pyrep.import_model(arm_path)
+            arm, gripper = arm_class(), gripper_class()
+            arm.set_position(panda_pos)
+        else:
+            arm, gripper = arm_class(), gripper_class()
         
         self._robot = Robot(arm, gripper)
         if self._randomize_every is None:

@@ -7,7 +7,7 @@
 This repo is forked from the [Aloha ACT](https://github.com/tonyzhaozh/act), [RLBench](https://github.com/stepjam/RLBench), [Pyrep](https://github.com/stepjam/PyRep). And it's one of the works of [Constrained Behavior Cloning for Robotic Learning](https://arxiv.org/abs/2408.10568?context=cs.RO)
 
 ## What's New?
-1. November 26, 2024： Now supports sawyer and panda, adding support for panda's original environment acquisition training and inference
+1. November 26, 2024： Now supports sawyer, panda and UR5, adding support for panda's original environment acquisition training and inference
 
 ## Installation(Ubuntu20.04)
 
@@ -77,7 +77,7 @@ cp task_design_back.ttt task_design.ttt
 ```bash
 python3 RLBench/tools/dataset_generator_hdf5.py \
 --save_path Datasets \
---robot sawyer \ 
+--robot sawyer \
 --tasks sorting_program5 \
 --variations 1 \
 --episodes_per_task 50 \
