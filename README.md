@@ -64,11 +64,13 @@ conda activate rlbench_act
 python3 RLBench/tools/task_builder2.py --task sorting_program5 --robot sawyer # panda
 #[remember don't save scene in Coppeliasim GUI ]
 ```
-Do not save the scence in Coppeliasim's GUI, either with *ctrl+s* or in the “Do you wish to save the changes?” window that pops up when you close it, you need to select *No* in all GUI screens. If you accidentally saved it in the GUI, run the following command:
+**Note: Do not save code in Coppeliasim's GUI**, either using *ctrl+s* or in the “Did you save changes?” popup that appears when you close the window when closing. This is because saving the scene file in the GUI will lose some components and lead to subsequent error reporting. If you accidentally save changes in the GUI, execute the following command:
 
 ```bash
+# If you get the error like "RuntimeError: Handle cam_head_mask does not exist"
 cd RLBench/rlbench
-rm task_design.ttt 
+rm task_design_sawyer.ttt task_design.ttt 
+cp task_design_sawyer_back.ttt task_design_sawyer.ttt
 cp task_design_back.ttt task_design.ttt
 ```
 
