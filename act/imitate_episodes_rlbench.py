@@ -155,7 +155,7 @@ def get_image(ts, camera_names, policy_class):  # for RLBench
     return curr_image
 
 def eval_bc(config, ckpt_name, save_episode=True, num_verification=50, variation=0):
-    set_seed(10)
+    set_seed(42)
     ckpt_dir = config['ckpt_dir']
     state_dim = config['state_dim']
     real_robot = config['real_robot']
@@ -194,7 +194,7 @@ def eval_bc(config, ckpt_name, save_episode=True, num_verification=50, variation
         query_frequency = 1
         num_queries = policy_config['num_queries']
 
-    max_timesteps = int(max_timesteps * 1.3) # may increase for real-world tasks
+    max_timesteps = int(max_timesteps * 1.0) # may increase for real-world tasks
 
     num_rollouts = num_verification 
     episode_returns = []
@@ -261,7 +261,10 @@ def eval_bc(config, ckpt_name, save_episode=True, num_verification=50, variation
                 ### post-process actions
                 raw_action = raw_action.squeeze(0).cpu().numpy()
                 action = post_process(raw_action)  
-                # print(f'{t=}: {action[7]=}') # for debug how the model control the gripper
+                # print(f'{t=}: {action[-1]=}') # for debug how the model control the gripper
+                if robot_name == "UR5" or robot_name == "ur5":
+                    action[6] = 1.0 - action[6]
+                
                 ts_obs, reward, terminate = env.step(action) # qpos could deal with gripper command
                 qpos_list.append(qpos_numpy)
                 rewards.append(reward) 

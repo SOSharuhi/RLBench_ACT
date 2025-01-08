@@ -78,7 +78,7 @@ If this project is helpful to you, please give us a star. We greatly appreciate 
 
 ```bash
 conda activate rlbench_act
-python3 RLBench/tools/task_builder2.py --task open_box --robot sawyer 
+python3 RLBench/tools/task_builder2.py --task sorting_program5 --robot sawyer 
 # [Remember: Do not save the scene in CoppeliaSim GUI but in the terminator with input 's']
 ```
 **Note: Do not save code in Coppeliasim's GUI**, either by using Ctrl+S or by confirming in the “Did you save changes?” popup when closing the window. Saving the scene in the GUI can result in missing components and lead to errors in subsequent executions. If you accidentally save changes, restore the task with the following commands:
@@ -99,17 +99,17 @@ cd ..; cd ..
 python3 RLBench/tools/dataset_generator_hdf5.py \
 --save_path Datasets \
 --robot sawyer \
---tasks open_box \
+--tasks sorting_program5 \
 --variations 1 \
 --episodes_per_task 50 \
---dynamic_step=True \
+--dynamic_step=False \
 --onscreen_render=True # False if you don't want to show the window
 ```
 
 ### 3. visualize episode
 
 ```bash
-python3 act/visualize_episodes.py --dataset_dir Datasets/open_box/variation0 --episode_idx 0
+python3 act/visualize_episodes.py --dataset_dir Datasets/sorting_program5/variation0 --episode_idx 0
 ```
 In addition, we recommend the use of hdf5 visualization web tools [myhdf5](https://myhdf5.hdfgroup.org/)
 
@@ -122,7 +122,7 @@ python3 act/imitate_episodes_rlbench.py \
 --ckpt_dir Trainings/sorting_program5 \
 --policy_class ACT --kl_weight 10 --chunk_size 20 --hidden_dim 512 --batch_size 8 --dim_feedforward 3200 \
 --num_epochs 2000  --lr 1e-5 \
---seed 0 --robot UR5 
+--seed 0 --robot sawyer 
 
 # infrence
 python3 act/imitate_episodes_rlbench.py \

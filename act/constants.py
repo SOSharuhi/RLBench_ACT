@@ -34,7 +34,7 @@ SIM_TASK_CONFIGS = {
     # RLBench
     'sorting_program5':{ 
         'dataset_dir': DATA_DIR + '/sorting_program5/variation0',
-        'episode_len': 400,
+        'episode_len': 100,
         'num_episodes': 50,
         'num_variation': 1,
         'camera_names': ['wrist'],
