@@ -43,19 +43,20 @@ def main(args):
     print(f"{task_config['num_episodes']=}, {task_config['num_variation']=}, {num_episodes=}, ")
     episode_len = task_config['episode_len']
     camera_names = task_config['camera_names']
+    chunk_size = args['chunk_size']
     
     if robot_name == "panda" or robot_name == "sawyer":
         state_dim =  8 
     else:
         state_dim =  7
     lr_backbone = 1e-5
-    backbone = 'resnet18'
+    backbone = 'resnet34'
     if 'ACT' in policy_class: # policy_class == 'ACT':
         enc_layers = 4
         dec_layers = 7
         nheads = 8 
         policy_config = {'lr': args['lr'],
-                         'num_queries': args['chunk_size'],
+                         'num_queries': chunk_size,
                          'kl_weight': args['kl_weight'],
                          'hidden_dim': args['hidden_dim'],
                          'dim_feedforward': args['dim_feedforward'],
@@ -102,7 +103,7 @@ def main(args):
         print()
         exit()
 
-    train_dataloader, val_dataloader, stats, _ = load_data(dataset_dir, num_episodes, camera_names, batch_size_train, batch_size_val)
+    train_dataloader, val_dataloader, stats, _ = load_data(dataset_dir, num_episodes, camera_names, batch_size_train, batch_size_val, chunk_size)
 
     # save dataset stats
     if not os.path.isdir(ckpt_dir):
@@ -260,13 +261,13 @@ def eval_bc(config, ckpt_name, save_episode=True, num_verification=50, variation
                 ### post-process actions
                 raw_action = raw_action.squeeze(0).cpu().numpy()
                 action = post_process(raw_action)  
-                # print(f'{t=}: {action=}')
+                # print(f'{t=}: {action[7]=}') # for debug how the model control the gripper
                 ts_obs, reward, terminate = env.step(action) # qpos could deal with gripper command
                 qpos_list.append(qpos_numpy)
                 rewards.append(reward) 
                 
-                if reward == env_max_reward:
-                    break # if already success, directly break this episode to speed up the eval process
+                # if reward == env_max_reward:
+                #     break # if already success, directly break this episode to speed up the eval process
 
                 t = t + 1
                 

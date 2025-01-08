@@ -34,7 +34,7 @@ SIM_TASK_CONFIGS = {
     # RLBench
     'sorting_program5':{ 
         'dataset_dir': DATA_DIR + '/sorting_program5/variation0',
-        'episode_len': 90,
+        'episode_len': 400,
         'num_episodes': 50,
         'num_variation': 1,
         'camera_names': ['wrist'],
@@ -75,6 +75,13 @@ SIM_TASK_CONFIGS = {
     'meat_on_grill':{ 
         'dataset_dir': DATA_DIR + '/meat_on_grill/variation0', 
         'episode_len': 70, 
+        'num_episodes': 50,
+        'num_variation': 1,
+        'camera_names': ['wrist']
+    },
+    'open_box':{ 
+        'dataset_dir': DATA_DIR + '/open_box/variation0', 
+        'episode_len': 200, 
         'num_episodes': 50,
         'num_variation': 1,
         'camera_names': ['wrist']

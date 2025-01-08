@@ -8,13 +8,14 @@ import IPython
 e = IPython.embed
 
 class EpisodicDataset(torch.utils.data.Dataset):
-    def __init__(self, episode_ids, dataset_dir, camera_names, norm_stats):
+    def __init__(self, episode_ids, dataset_dir, camera_names, norm_stats, chunk_size):
         super(EpisodicDataset).__init__()
         self.episode_ids = episode_ids
         self.dataset_dir = dataset_dir
         self.camera_names = camera_names
         self.norm_stats = norm_stats
         self.is_sim = None
+        self.chunk_size = chunk_size
         self.__getitem__(0) # initialize self.is_sim
 
     def __len__(self):
@@ -64,7 +65,9 @@ class EpisodicDataset(torch.utils.data.Dataset):
         qpos_data = torch.from_numpy(qpos).float()
         action_data = torch.from_numpy(padded_action).float()
         is_pad = torch.from_numpy(is_pad).bool()
-
+        action_data = action_data[:self.chunk_size, :]
+        is_pad = is_pad[:self.chunk_size]
+        
         # channel last
         image_data = torch.einsum('k h w c -> k c h w', image_data)
 
@@ -72,6 +75,7 @@ class EpisodicDataset(torch.utils.data.Dataset):
         image_data = image_data / 255.0
         action_data = (action_data - self.norm_stats["action_mean"]) / self.norm_stats["action_std"]
         qpos_data = (qpos_data - self.norm_stats["qpos_mean"]) / self.norm_stats["qpos_std"]
+        # print(f'{action_data.shape=}, {image_data.shape=}')
         return image_data, qpos_data, action_data, is_pad
 
 
@@ -87,19 +91,18 @@ def get_norm_stats(dataset_dir, num_episodes):
         all_qpos_data.append(torch.from_numpy(qpos))
         all_action_data.append(torch.from_numpy(action))
         
-    # episode_len_max = max(arr.shape[0] for arr in all_qpos_data) 
+    episode_len_max = max(arr.shape[0] for arr in all_qpos_data) 
 
-    # # if set the pad for the max len therewill be wrong that wo cant get the object position
-    # for idx in range(len(all_qpos_data)): 
-    #     if (all_qpos_data[idx].shape[0] < episode_len_max) :
-    #         diff_len = episode_len_max - all_qpos_data[idx].shape[0]
-    #         pad_qpos_data = torch.zeros((all_qpos_data[idx].shape[0] + diff_len, all_qpos_data[idx].shape[1]))
-    #         pad_qpos_data[:all_qpos_data[idx].shape[0]] = all_qpos_data[idx]
-    #         all_qpos_data[idx] = pad_qpos_data
+    # if set the pad for the max len there will be wrong that wo cant get the object position
+    for idx in range(len(all_qpos_data)): 
+        if (all_qpos_data[idx].shape[0] < episode_len_max) :
+            pad_qpos_data = torch.zeros((episode_len_max, all_qpos_data[idx].shape[1]))
+            pad_qpos_data[:all_qpos_data[idx].shape[0]] = all_qpos_data[idx]
+            all_qpos_data[idx] = pad_qpos_data
             
-    #         pad_action = torch.zeros((all_action_data[idx].shape[0] + diff_len, all_action_data[idx].shape[1]))
-    #         pad_action[:all_action_data[idx].shape[0]] = all_action_data[idx]
-    #         all_action_data[idx] = pad_action
+            pad_action = torch.zeros((episode_len_max, all_action_data[idx].shape[1]))
+            pad_action[:all_action_data[idx].shape[0]] = all_action_data[idx]
+            all_action_data[idx] = pad_action
               
     all_qpos_data = torch.stack(all_qpos_data)
     all_action_data = torch.stack(all_action_data)
@@ -122,7 +125,7 @@ def get_norm_stats(dataset_dir, num_episodes):
     return stats
 
 
-def load_data(dataset_dir, num_episodes, camera_names, batch_size_train, batch_size_val):
+def load_data(dataset_dir, num_episodes, camera_names, batch_size_train, batch_size_val, chunk_size):
     print(f'\nData from: {dataset_dir}\n')
     # obtain train test split
     train_ratio = 0.8
@@ -134,8 +137,8 @@ def load_data(dataset_dir, num_episodes, camera_names, batch_size_train, batch_s
     norm_stats = get_norm_stats(dataset_dir, num_episodes)
 
     # construct dataset and dataloader
-    train_dataset = EpisodicDataset(train_indices, dataset_dir, camera_names, norm_stats)
-    val_dataset = EpisodicDataset(val_indices, dataset_dir, camera_names, norm_stats)
+    train_dataset = EpisodicDataset(train_indices, dataset_dir, camera_names, norm_stats, chunk_size)
+    val_dataset = EpisodicDataset(val_indices, dataset_dir, camera_names, norm_stats, chunk_size)
     train_dataloader = DataLoader(train_dataset, batch_size=batch_size_train, shuffle=True, pin_memory=True, num_workers=1, prefetch_factor=1)
     val_dataloader = DataLoader(val_dataset, batch_size=batch_size_val, shuffle=True, pin_memory=True, num_workers=1, prefetch_factor=1)
 

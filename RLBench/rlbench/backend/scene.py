@@ -117,7 +117,7 @@ class Scene(object):
         self._variation_index = 0
 
     def init_episode(self, index: int, randomly_place: bool=True,
-                     max_attempts: int = 5, place_demo: bool = False) -> List[str]:
+                     max_attempts: int = 10, place_demo: bool = False) -> List[str]:
         """Calls the task init_episode and puts randomly in the workspace.
         """
 
@@ -345,7 +345,8 @@ class Scene(object):
     def get_demo(self, record: bool = True,
                  callable_each_step: Callable[[Observation], None] = None,
                  randomly_place: bool = True,
-                 episode_len: int = 50) -> Demo:
+                 episode_len: int = 50,
+                 dynamic_step: bool = False) -> Demo:
         """Returns a demo (list of observations)"""
 
         if not self._has_init_task:
@@ -386,15 +387,20 @@ class Scene(object):
                     demo.append(self.get_observation())
                 
                 try:
-                    if len(ext) > 0 and 'steps(' in ext:
-                        left = ext.index('steps(') + 6
-                        right = ext[left:].index(')')
-                        steps_len = int(ext[left:left+right])
-                        path, is_linear = point.get_path(steps=steps_len)
-                    elif len(waypoints) == 1:
-                        path, is_linear = point.get_path(steps = episode_len-1)
+                    if dynamic_step:
+                        path, is_linear = point.get_path()  # steps = 10
                     else:
-                        path, is_linear = point.get_path(steps = 10) 
+                        if len(ext) > 0 and 'steps(' in ext:
+                            left = ext.index('steps(') + 6
+                            right = ext[left:].index(')')
+                            steps_len = int(ext[left:left+right])
+                            
+                            path, is_linear = point.get_path(steps=steps_len) # 
+                            
+                        elif len(waypoints) == 1:
+                            path, is_linear = point.get_path(steps = episode_len-1)
+                        else:
+                            path, is_linear = point.get_path()  # steps = 10
                         
                     [s.set_collidable(True) for s in colliding_shapes]
                 except ConfigurationPathError as e:
@@ -429,21 +435,21 @@ class Scene(object):
                     gripper = self.robot.gripper
                     if 'open_gripper(' in ext:
                         
-                        print('open_gripper')
+                        # print('open_gripper')
                         gripper.release()
                         start_of_bracket = ext.index('open_gripper(') + 13
                         contains_param = ext[start_of_bracket] != ')'
                         if not contains_param:
                             done = False
                             while not done:
-                                done = gripper.actuate(1.0, 0.04)
+                                done = gripper.actuate(1.0, 1.0)
                                 self.pyrep.step()
                                 self.task.step()
-                                if self._obs_config.record_gripper_closing:
-                                    self._demo_record_step(
-                                        demo, record, callable_each_step)
+                                # if self._obs_config.record_gripper_closing:
+                                self._demo_record_step(
+                                    demo, record, callable_each_step)
                     elif 'close_gripper(' in ext:
-                        print('close_gripper')
+                        # print('close_gripper')
                         start_of_bracket = ext.index('close_gripper(') + 14
                         contains_param = ext[start_of_bracket] != ')'
                         if not contains_param:
@@ -497,15 +503,15 @@ class Scene(object):
             raise DemoError('Demo was completed, but was not successful.',
                             self.task)
         
-        print(episode_len)
+        # print(episode_len)
         
-        if episode_len != 50 and self._lens_episode_count != episode_len : 
-            raise DemoError('Demo was completed, but was not the set lens of episode.',
-                            self.task)
+        # if episode_len != 50 and self._lens_episode_count != episode_len : 
+        #     raise DemoError('Demo was completed, but was not the set lens of episode.',
+        #                     self.task)
         
-        if is_linear == False:
-            raise DemoError('Demo was completed, but was not linear path.',
-                            self.task)
+        # if is_linear == False:
+        #     raise DemoError('Demo was completed, but was not linear path.',
+        #                     self.task)
         
         processed_demo = Demo(demo)
         processed_demo.num_reset_attempts = self._attempts + 1

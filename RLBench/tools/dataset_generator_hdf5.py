@@ -44,6 +44,7 @@ flags.DEFINE_integer('episodes_per_task', 50, 'The number of episodes to collect
 flags.DEFINE_integer('variations', -1, 'Number of variations to collect per task. -1 for all.')
 flags.DEFINE_boolean('onscreen_render', False, 'if onscreen render.')
 flags.DEFINE_string('robot', 'sawyer', 'which robot do you want use.')
+flags.DEFINE_boolean('dynamic_step', False, 'Dynamic step size generates trajectories and the dataset format will be substantially larger.')
 
 np.set_printoptions(linewidth=200)
 
@@ -103,6 +104,8 @@ def run(i, lock, task_index, variation_count, results, file_lock, tasks):
 
     num_tasks = len(tasks)
     img_size = list(map(int, FLAGS.image_size))
+    dynamic_step = FLAGS.dynamic_step
+    
     obs_config = ObservationConfig()
     
     obs_config.set_all(False)
@@ -185,7 +188,7 @@ def run(i, lock, task_index, variation_count, results, file_lock, tasks):
             while attempts > 0:
                 try:
                     # TODO: for now we do the explicit looping.
-                    demo, = task_env.get_demos(amount=1, live_demos=True, episode_len=episode_len)
+                    demo, = task_env.get_demos(amount=1, live_demos=True, episode_len=episode_len, dynamic_step=dynamic_step)
                 except Exception as e: 
                     attempts -= 1
                     if attempts > 0:

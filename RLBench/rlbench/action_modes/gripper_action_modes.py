@@ -58,7 +58,7 @@ class Discrete(GripperActionMode):
             scene.task.step()
             timeout_count = timeout_count + 1
             if timeout_count > 100:
-                print("gripper alignment timeout")
+                # print("gripper alignment timeout")
                 break
 
     def action(self, scene: Scene, action: np.ndarray):
@@ -69,8 +69,12 @@ class Discrete(GripperActionMode):
         open_condition = all(
             x > 0.9 for x in scene.robot.gripper.get_open_amount())
         current_ee = 1.0 if open_condition else 0.0
-        action = float(action[0] > 0.5)
-
+        
+        if current_ee == 1.0:
+            action = float(action[0] > 0.5)
+        else:
+            action = float(action[0] > 0.4)
+        
         if current_ee != action:
             done = False
             if not self._detach_before_open:

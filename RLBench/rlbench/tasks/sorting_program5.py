@@ -50,10 +50,10 @@ class SortingProgram5(Task):
         
         try:
             for ob in [self.target_container0, self.target_container1]:
-                box_boundary_spawn.sample(ob, min_distance=0, min_rotation=(0, 0, 0), max_rotation=(0.785, 0, 0)) # 0.395 # 0.785
+                box_boundary_spawn.sample(ob, min_distance=0, min_rotation=(0, 0, 0), max_rotation=(0.3925, 0, 0)) # 0.395 # 0.785
         except:
             for ob in [self.target_container0, self.target_container1]:
-                box_boundary_spawn.sample(ob, min_distance=0, min_rotation=(0, 0, 0), max_rotation=(0.785, 0, 0)) # 0.395 # 0.785
+                box_boundary_spawn.sample(ob, min_distance=0, min_rotation=(0, 0, 0), max_rotation=(0.3925, 0, 0)) # 0.395 # 0.785
             
         return ['grasp the %s target' % color_name,
                 'put the %s target to the %s box' % (color_name, color_name)]  
