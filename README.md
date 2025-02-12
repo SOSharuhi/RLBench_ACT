@@ -12,6 +12,8 @@ It is part of the work on [Constrained Behavior Cloning for Robotic Learning](ht
 
 ## What's New?
 
+- **February 12, 2025**: Added support for Joycon collect datasets with [joycon-robotics](https://github.com/box2ai-robotics/joycon-robotics).
+
 - **January 8, 2025**: Added support for **variable step size** and **curve trajectory dataset generation**, as well as **dynamic step size training**, further optimizing **gripper control** during both generation and inference.
 
 - **November 26, 2024**: Now supports **Sawyer**, **Panda**, and **UR5** robots. Added support for Panda's original environment acquisition, training, and inference.
@@ -105,6 +107,25 @@ python3 RLBench/tools/dataset_generator_hdf5.py \
 --dynamic_step=False \
 --onscreen_render=True # False if you don't want to show the window
 ```
+
+**NEW (2025.2.7)**: Data collection now supports RoboStick!  
+Make sure you have RoboStick installed correctly by following the instructions in [this repository](https://github.com/box2ai-robotics/joycon-robotics). Once installed, you can start collecting data by running the command below:
+
+```bash
+python3 act/dataset_collect_joycon.py \
+--save_path Datasets \
+--robot sawyer \
+--tasks sorting_program5 \
+--variations 1 \
+--episodes_per_task 50 
+```
+Tips for operation:
+- `stick button down`: go down follow the direction the gripper.
+- `stick movement`: the gripper move in the plane.
+- `higher trigger key(R)`: go up opposite direction of the gripper.
+- `lower trigger key(ZR)`: control the gripper open or close.
+- `Y`: restart this episode.
+- `A`: save the episode and start the next.
 
 ### 3. visualize episode
 

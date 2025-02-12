@@ -328,7 +328,8 @@ class Arm(RobotComponent):
         self._ik_target.set_pose(prev_pose)
         if len(ret_floats) == 0:
             # print("ConfigurationPathError")
-            raise ConfigurationPathError('Could not create path.')
+            # raise ConfigurationPathError('Could not create path.')
+            return None
         return ArmConfigurationPath(self, ret_floats)
 
     def get_nonlinear_path(self, position: Union[List[float], np.ndarray],
