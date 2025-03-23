@@ -39,7 +39,7 @@ class MyThread(threading.Thread):
     def get_result(self):
         return self._return_value
 
-def get_demo_joycon(joyconrobotics, env, init_gpos):
+def get_demo_joycon(joyconrobotics, env, right_zero_pos):
     # 另开一个线程记录数据
     recoder = MyThread(target=recoding_process, args=(env._scene,))
     recoder.start()
@@ -56,8 +56,10 @@ def get_demo_joycon(joyconrobotics, env, init_gpos):
         r4 = R.from_euler('xyz', orientation_rad, degrees=False)
         orientation_output = r4.as_quat()
         right_target_quat = orientation_output
-
+        
+        frame_start_time = time.time()
         new_path = env._robot.arm.get_linear_path(position=right_target_pos, quaternion=right_target_quat, steps=5, relative_to=env._robot.arm, ignore_collisions=True)
+        # read rate = 870.1875518672199 Hz
         
         if new_path != None: # if IK_success
             path.append(new_path)
@@ -76,7 +78,8 @@ def get_demo_joycon(joyconrobotics, env, init_gpos):
             
             target_gpos = now_gpos.copy()
             joyconrobotics.set_position = target_gpos[0:3]
-            
+        # 3.6954350499913655 Hz
+        print(f'read rate = {1/(time.time() - frame_start_time)} Hz')
         if control_button != 0: # 按下录制下一个数据集，更新场景和机械臂，复位手柄
             if control_button == 1:
                 recoder.do_run = False
@@ -89,7 +92,7 @@ def get_demo_joycon(joyconrobotics, env, init_gpos):
                 path[i].clear_visualization()
             _, ts_obs = env.reset() 
             
-            joyconrobotics.set_position(init_gpos[0:3])
+            joyconrobotics.set_position(right_zero_pos)
             joyconrobotics.orientation_sensor.reset_yaw()
             print(f'reset scene')
             
@@ -99,6 +102,8 @@ def get_demo_joycon(joyconrobotics, env, init_gpos):
             else:
                 recoder = MyThread(target=recoding_process, args=(env._scene,))
                 recoder.start()
+        # print(f'the control frame rate = {(1/time.time() - frame_start_time)} Hz')
+        time.sleep(0.01)
             
 
 def init_joycon_rlbench(obs):
@@ -107,20 +112,22 @@ def init_joycon_rlbench(obs):
     right_zero_pos = gpos[:3]
     right_zero_quat = gpos[3:7]
     right_zero_euler = R.from_quat(right_zero_quat).as_euler('xyz', degrees=True)
-    init_gpos = np.concatenate((right_zero_pos, right_zero_euler))
+    # init_gpos = np.concatenate((right_zero_pos, right_zero_euler))
     # glimit = [[0.125, -0.4,  0.046, -3.1, -1.5, -1.5], 
     #          [0.380,  0.4,  0.23,  3.1,  1.5,  1.5]]
     name = "right"
     joyconrobotics = JoyconRobotics(
                         device=name, 
-                        init_gpos=init_gpos, 
+                        offset_position_m=right_zero_pos,
+                        # offset_euler_rad=right_zero_euler,
                         pitch_down_double=False,
                         offset_euler_rad=[0, -math.pi, 0],
                         euler_reverse=[1, -1, 1],
+                        direction_reverse=[-1, 1, 1],
                         pure_xz = False
                     )
-    
-    return joyconrobotics, init_gpos
+
+    return joyconrobotics, right_zero_pos
 
 def check_and_make(dir):
     if not os.path.exists(dir):
@@ -190,12 +197,12 @@ def main(args):
     task_env.set_variation(variations) 
     descriptions, ts_obs = task_env.reset() 
 
-    joyconrobotics, init_gpos = init_joycon_rlbench(ts_obs)
+    joyconrobotics, right_zero_pos = init_joycon_rlbench(ts_obs)
     
     for ex_idx in range(episodes_per_task):
         print('Process Task:', task_env.get_name(),
                   '// Variation:', variations, '// Demo:', ex_idx)
-        demo = get_demo_joycon(joyconrobotics, task_env, init_gpos)
+        demo = get_demo_joycon(joyconrobotics, task_env, right_zero_pos)
         save_demo(demo, variation_path, ex_idx + episodes_per_task * variations)
 
 if __name__ == '__main__':
